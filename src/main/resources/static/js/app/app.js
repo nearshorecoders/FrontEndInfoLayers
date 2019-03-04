@@ -3,6 +3,14 @@
 //demo es el nombre de la app 'UserManagement'
 var app = angular.module('UserManagement', ['ui.router']);
 
+
+app.constant("CONSTANTS", {
+    getUserByIdUrl: "/user/getUser/",
+    getAllUsers: "/user/getAllUsers",
+    saveUser: "/user/saveUser"
+});
+
+
 //Controller Part
 //app.controller("UserController", function($scope, $http) {
 // 

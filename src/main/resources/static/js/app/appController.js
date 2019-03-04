@@ -1,10 +1,10 @@
 'use strict'
 //aqui registramos todos los eneventos de la vista
 //Hacemos referencia al modulo padre, en este caso UserManagement
-var module = angular.module('UserManagement', []);
+var module = angular.module('UserManagement', ["$scope", "UserService"]);
 
 //Registramos el controlador User controller en los controladores de la aplicacion.
-module.controller("UserController", function($scope, $http) {
+module.controller("UserController", function($scope, UserService) {
 	 
 	 
 	    $scope.users = [];
