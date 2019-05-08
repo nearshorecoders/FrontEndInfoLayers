@@ -16,13 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-//import com.org.pos.model.Usuario;
-//import com.org.pos.services.PermisosService;
+import infolayers.frontend.service.PermisosService;
+
 
 @Controller
 //@RequestMapping(value = "/businesstools")
 public class HomeController {
 
+	@Autowired
+	PermisosService permisosService;
+	
 //    @GetMapping("/")
 //    public String home1() {
 //        return "/login";
@@ -127,7 +130,7 @@ public class HomeController {
 	
 	@RequestMapping(value = "/getMainMenu",method = RequestMethod.GET)
 	public ResponseEntity<?> getMenu(Principal principal) {
-		 return null;//new ResponseEntity<Map<String,Object>>(permisosService.getAllPermisosByRol(principal),HttpStatus.OK);
+		 return new ResponseEntity<Map<String,Object>>(permisosService.getAllPermisosByRol(principal),HttpStatus.OK);
 	}
 	 
 	

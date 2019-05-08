@@ -251,6 +251,126 @@ $(document).ready(function () {
 	layout.init();
 });
 
+var layoutUtils = {
+		intervalB : false,
+		refreshTable : function(idTable) {
+
+			try {
+				$(idTable).DataTable({
+					"language" : {
+						"lengthMenu" : "Mostrar _MENU_ registros por pag.",
+						"zeroRecords" : "No hay datos para mostrar",
+						"info" : "Mostrando _PAGE_ de _PAGES_ páginas",
+						"infoEmpty" : "No hay datos para mostrar",
+						"infoFiltered" : "(Filtrado de  _MAX_ registros)",
+						"sSearch" : "Buscar",
+						"oPaginate" : {
+							"sFirst" : "Primero",
+							"sPrevious" : "Anterior",
+							"sNext" : "Siguiente",
+							"sLast" : "Último"
+						}
+					}
+				});
+			}
+			catch(err) {
+				console.log(err);
+			}
+		},
+		limpiaTabla : function(idTabla) {
+			if ($.fn.dataTable.isDataTable(idTabla)) {
+				$(idTabla).DataTable().destroy();
+			}
+			$(idTabla + " tbody").html("");
+		},
+		progressDownload: function( id , name, url, callback, modal) {
+			var progress = '<div class="progress" id="pgbCapa'+id+'">'+
+			  '<div class="progress-bar progress-bar-striped active" role="progressbar"'+
+				  'style="width:15%">Iniciando...'+
+				  '</div>'+
+				'</div>';
+			if (modal){
+				$("#progressContainerM").append(progress);			
+			}else{
+				$("#progressContainer").append(progress);
+			}
+			$.ajax({
+			    xhr: function() {
+			        var xhr = new window.XMLHttpRequest();
+			       xhr.addEventListener("progress", function(evt) {
+			           if (evt.lengthComputable) {
+			               var percentComplete = evt.loaded / evt.total;
+			               var percent = percentComplete *100;
+			               if(percent > 5){
+			            	   $("#pgbCapa"+id+ " .progress-bar").html(name+" "+(percent).toFixed(2)+ "%");
+			            	   $("#pgbCapa"+id+ " .progress-bar").css("width", (percent).toFixed(2)+ "%");
+			               }
+						   if(percentComplete == 1){
+							   $("#pgbCapa"+id).remove();
+						   }
+			           }
+			       }, true);
+
+			       return xhr;
+			    },
+			    type: 'GET',
+			    url: url,
+			    dataType: "json",
+			    success: callback
+			});
+		},
+		progressDownloadPost: function( id , name, url, callback, modal, dataSend) {
+			var progress = '<div class="progress" id="pgbCapa'+id+'">'+
+			  '<div class="progress-bar progress-bar-striped active" role="progressbar"'+
+				  'style="width:15%">Iniciando...'+
+				  '</div>'+
+				'</div>';
+			if (modal){
+				$("#progressContainerM").append(progress);			
+			}else{
+				$("#progressContainer").append(progress);
+			}
+			$.ajax({
+			    xhr: function() {
+			        var xhr = new window.XMLHttpRequest();
+			       xhr.addEventListener("progress", function(evt) {
+			           if (evt.lengthComputable) {
+			               var percentComplete = evt.loaded / evt.total;
+			               var percent = percentComplete *100;
+			               if(percent > 5){
+			            	   $("#pgbCapa"+id+ " .progress-bar").html(name+" "+(percent).toFixed(2)+ "%");
+			            	   $("#pgbCapa"+id+ " .progress-bar").css("width", (percent).toFixed(2)+ "%");
+			               }
+						   if(percentComplete == 1){
+							   $("#pgbCapa"+id).remove();
+						   }
+			           }
+			       }, true);
+
+			       return xhr;
+			    },
+			    type: 'POST',
+			    url: url,
+			    data: dataSend,
+			    dataType: "json",
+			    success: callback
+			});
+		},
+		blockDiv: function(div) {
+			$(div).block({ 
+	            message: $("<img/>").attr("src","img/load.gif").css("width","50%"), 
+	            css: { 
+	                width: '100%',
+	                backgroundColor: "transparent"
+	            },
+				overlayCSS: { backgroundColor: '#008cc9' } 
+	        });
+		},
+		unBlockDiv: function(div) {
+			$(div).unblock();
+		},
+	}
+
 function navegacion(element){
 	console.log("-----------------------");
 	layout.events.changeView(element.id);

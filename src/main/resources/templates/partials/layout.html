@@ -43,8 +43,31 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>	
+  <link rel="stylesheet" href="js/plugins/leaflet/MarkerCluster.css" type="text/css" media="all"></link>
+  <link rel="stylesheet" href="js/plugins/leaflet/MarkerCluster.Default.css" type="text/css" media="all"></link>
+  <link rel="stylesheet" href="js/plugins/awesome-marker/leaflet.awesome-markers.css" type="text/css" media="all"></link>
+  <!-- jQuery 3 -->
+  <script src="js/theme/bower_components/jquery/dist/jquery.min.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqKmX9zpmC6uOg5ZOW_9gLsjWrBHa7SDs&callback=initMap" type="text/javascript"></script>
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?v=weekly&key=AIzaSyDqKmX9zpmC6uOg5ZOW_9gLsjWrBHa7SDs;libraries=places;sensor=false"></script>-->
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
   <script src="js/plugins/angular.min.js"></script>
   <script src="js/plugins/angular-resource.min.js"></script>
+  <script type="text/javascript" src="js/modules/maps.js"></script>
+  <script type="text/javascript" src="js/modules/googleMaps.js"></script>
+  <!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.36&#x26;key=AIzaSyDqKmX9zpmC6uOg5ZOW_9gLsjWrBHa7SDs;libraries=places"></script>-->
+  <script type="text/javascript" src="js/plugins/googleMapsMarkerClustererPlus/markerclusterer.js"></script>
+  <script type="text/javascript" src="js/plugins/leaflet/leaflet.markercluster.js"></script>
+  <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('googleMap'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+      }
+    </script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini" ng-app="UserManagement" ng-controller="UserController">
 <!-- Site wrapper -->
@@ -243,16 +266,15 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper" id="btContent">
-    <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Blank page
-        <small>it all starts here</small>
+        Information Layers
+        <small>All the info that you need</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
+        <li><a href="#">Informatio Layers</a></li>
+        <li class="active">Inicio</li>
       </ol>
     </section>
 
@@ -262,7 +284,7 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Title</h3>
+          <h3 class="box-title">México</h3>
 
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
@@ -273,74 +295,14 @@
           </div>
         </div>
         <div class="box-body">
-	        <div>
-		     <h3>
-		         CRUD: Spring Boot + Rest + AngularJS
-		      </h3>
-		      <form ng-submit="submitUser()">
-		         <table border="0">
-		            <tr>
-		               <td>Id</td>
-		               <td>{{userForm.id}}</td>
-		            </tr>
-		            <tr>
-		               <td>Email</td>
-		               <td><input type="text" ng-model="userForm.email" /></td>
-		            </tr>
-		            <tr>
-		               <td>Name</td>
-		               <td><input type="text" ng-model="userForm.firstName"  /></td>
-		            </tr>
-		            <tr>
-		               <td>Last name</td>
-		               <td><input type="text" ng-model="userForm.lastName"  /></td>
-		            </tr>
-		            <tr>
-		               <td colspan="2">
-		                  <input type="submit" value="Submit" class="blue-button" />
-		               </td>
-		            </tr>
-		         </table>
-		      </form>
-		      <br/>
-		      <a class="create-button" ng-click="createEmployee()">Create User</a>
-		      <table border="1">
-		         <tr>
-		            <th>User Id</th>
-		            <th>Email</th>
-		            <th>Name</th>
-		            <th>Last Name</th>
-		            <th>Edit</th>
-		            <th>Delete</th>
-		         </tr>
-		         <!-- $scope.employees -->
-		         <tr ng-repeat="user in users">
-		            <td> {{ user.id }}</td>
-		            <td> {{ user.email }}</td>
-		            <td >{{ user.firstName}}</td>
-		            <td >{{ user.lastName }}</td>
-		            <td>
-		            <a ng-click="editUser(user)" class="edit-button">Edit</a>
-		            </td>
-		            <td>
-		            <a ng-click="deleteUser(user)" class="delete-button">Delete</a>
-		            </td>
-		         </tr>
-		      </table>
-		    </div>
-        	<!--
-          	<div class="container" ng-controller="UserController">
-			    <div class="row">
-			        <label>User</label> <input type="text" ng-model="userDto.userName" class="input-sm spacing"/>
-			        <button ng-click="saveUser()" class="btn btn-sm btn-info">Guardar User</button>
-			    </div>
-			    <div class="row" ng-repeat="user in allUsers">
-			        <div class="">
-			           <h3>{{user.userName}}</h3>
-			        </div>
-			    </div>
-			</div>
-			!-->
+			<div class="tab-pane fade active in" id="mapatab" role="tabpanel">
+                        <div id="container" class="cont-mapa">
+                            <div id="initialMap" style="height: calc(100vh - 104px);z-index: 0;"></div>
+                            <div id="googleMap" style="height: calc(100vh - 106px);z-index: 0;"></div>
+                            <div id="divLayers"></div>
+                            <div id="progressContainer" class="progressContainer"></div>
+                        </div>
+                    </div>
         </div>
         <!-- /.box-body -->
         <div class="box-footer">
@@ -559,8 +521,7 @@
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
-<!-- jQuery 3 -->
-<script src="js/theme/bower_components/jquery/dist/jquery.min.js"></script>
+
 <!-- Bootstrap 3.3.7 -->
 <script src="js/theme/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- Datatables -->
@@ -589,6 +550,7 @@
 <script src="js/app/appController.js"></script>
 
 <script src="js/modules/layout.js"></script>
+<script src="js/modules/mainMap.js"></script>
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree();
