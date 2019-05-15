@@ -248,42 +248,72 @@ var circumscription = (function() {
 		return color;
 	},
         loadDataAllZones : function () {
-//            $.ajax({
-//                url: "circumscription/getAllZones",
-//            }).done(function(data) {
-//                ///creating content for main menu circunscription
-//                $('#contenedorCircunscripcion').html('');
-//                for(var i=0;i<data.length;i++){
-//
-//                    arrayAllZones[data[i].description]=data[i];
-//                    var cadenaEstados="";
-//                    for(var j=0;j<data[i].states.length;j++){
-//                        cadenaEstados=cadenaEstados+data[i].states[j].name + ", ";
-//                    }
-//                    if(cadenaEstados!=""){
-//                        cadenaEstados=cadenaEstados.substring(0,cadenaEstados.length-1);
-//                    }
-//
-//                    var population=data[i].population.toLocaleString().trim();
-//                    population=population.replace(/\./g,',');
-//                    var contentCircunscription='<li>'+
-//                        '<a class="circ" id="circunscripcion'+data[i].description+'" onclick="selectCircunscription(this);" test="0" role="button" data-parent="#accordion" aria-expanded="true">'+
-//                        '<div class="caja-circunscripciones">'+
-//                        '<div class="num-circ">'+data[i].description+'</div>'+
-//                        '<p class="texto-lista-estados">'+
-//                        cadenaEstados+
-//                        '</p>'+
-//                        '<p class="small">Poblacion '+ population + '</p>'+
-//                        '</div>'+
-//                        '</a>'+
-//                        '</li>';
-//
-//                    $('#contenedorCircunscripcion').append(contentCircunscription);
-//                }
-//
-//            });
+            $.ajax({
+                url: "http://localhost:8080/api/v1/informationlayers/electoralZones",
+            }).done(function(data) {
+            	console.log("Se obtuvieron zonas electorales");
+            	console.log(data);
+            });
             
+//            $.ajax({
+//                url: "http://localhost:8080/api/v1/informationlayers/states",
+//            }).done(function(data) {
+//            	console.log("Se obtuvieron Estados");
+//            	st.geoJSONMap=data;
+//            	events.loadStatesOnMap();
+//            });            
+            
+            $.ajax({
+                url: "http://localhost:8080/api/v1/informationlayers/pobreza",
+            }).done(function(data) {
+            	console.log("Se obtuvieron pobreza");
+            	st.geoJSONMap=data;
+            	events.loadStatesOnMap();
+            }); 
         },
+        loadStatesOnMap: function (){
+        	console.log("hereee");
+        	if(st.globalGeoJson){
+        		st.globalGeoJson.clearLayers();
+        	}
+        	st.globalGeoJson = L.geoJSON(st.geoJSONMap , {  
+        		style: function(feature) {
+        			console.log(feature);
+                     return {
+                       fillColor: feature.properties.color,
+                       weight: 1,
+                       color: '#ddd',
+                       opacity: 1,
+                       fillOpacity: 1,
+                     };
+                   },
+		           onEachFeature: function (feature, layer) {
+		        		layer.on({
+		        			mouseover:  function (e) {
+		        				$(".info.leaflet-control").css("display", "block")
+		        				.html('<h4 style="text-align: center;">'+layer.feature.properties.state+'</h4>');
+		        				
+		        				var selectedLayer = e.target;
+		        				st.globalGeoJson.eachLayer(function (layer) {  
+	        						  if(circunscripcion == layer.feature.properties.circumscription && selectedLayer.feature.stateId ==  layer.feature.stateId) {    
+	        							  layer.setStyle({ weight: 4,color: '#3cd86c' })
+	        						  }else{
+	        							  layer.setStyle({ weight: 1,color: '#ddd' })
+	        						  }
+	        						});
+		        			},
+		        			click:  function (e) {
+		        				var layer = e.target;
+		        				if(circunscripcion == layer.feature.properties.circumscription){
+		        					circumscription.st.globalMap.clearLayers();
+		        					selectState(layer.feature.stateId);
+		        				}
+		        			}, 
+		        		});
+		        	}
+                 });
+        	st.globalGeoJson.addTo(st.globalMap);
+    	},
         loadSelectedCircunscription: function (circunscripcion){
         	if(st.globalGeoJson){
         		st.globalGeoJson.clearLayers();
