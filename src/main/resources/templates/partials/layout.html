@@ -47,6 +47,7 @@
   <link rel="stylesheet" href="js/plugins/leaflet/MarkerCluster.css" type="text/css" media="all"></link>
   <link rel="stylesheet" href="js/plugins/leaflet/MarkerCluster.Default.css" type="text/css" media="all"></link>
   <link rel="stylesheet" href="js/plugins/awesome-marker/leaflet.awesome-markers.css" type="text/css" media="all"></link>
+  <link rel="stylesheet" href="js/plugins/openlayers/ol.css" type="text/css"></link>
   <!-- jQuery 3 -->
   <script src="js/theme/bower_components/jquery/dist/jquery.min.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqKmX9zpmC6uOg5ZOW_9gLsjWrBHa7SDs&callback=initMap" type="text/javascript"></script>
@@ -59,6 +60,8 @@
   <!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.36&#x26;key=AIzaSyDqKmX9zpmC6uOg5ZOW_9gLsjWrBHa7SDs;libraries=places"></script>-->
   <script type="text/javascript" src="js/plugins/googleMapsMarkerClustererPlus/markerclusterer.js"></script>
   <script type="text/javascript" src="js/plugins/leaflet/leaflet.markercluster.js"></script>
+  <script type="text/javascript" src="js/plugins/leaflet/plugins/KML.js"></script>
+  <script type="text/javascript" src="js/plugins/openlayers/ol.js"></script>
   <script>
       var map;
       function initMap() {
@@ -297,10 +300,11 @@
         <div class="box-body">
 			<div class="tab-pane fade active in" id="mapatab" role="tabpanel">
                         <div id="container" class="cont-mapa">
-                            <div id="initialMap" style="height: calc(100vh - 104px);z-index: 0;"></div>
-                            <div id="googleMap" style="height: calc(100vh - 106px);z-index: 0;display:none"></div>
-                            <div id="divLayers"></div>
                             <div id="progressContainer" class="progressContainer"></div>
+                            <div id="initialMap" style="height: calc(100vh - 104px);z-index: 0;display:none"></div>
+                            <div id="googleMap" style="height: calc(100vh - 106px);z-index: 0;display:none"></div>
+                            <div id="openLayersMap" style="height: calc(100vh - 106px);z-index: 0;"></div>
+                            <div id="divLayers"></div>
                         </div>
                     </div>
         </div>

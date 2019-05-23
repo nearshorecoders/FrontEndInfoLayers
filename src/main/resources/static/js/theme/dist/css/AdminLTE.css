@@ -503,6 +503,7 @@ a:focus {
   padding: 0;
   overflow-y: scroll;
   max-height: 600px;
+  -webkit-scrollbar: { width: 0 !important }
 }
 
 .sidebar-menu {

@@ -8,6 +8,7 @@ public class Permisos {
 	private Integer moduloPadre;
 	private String urlAction;
 	private String componentString;
+	private String edoIdentifierMongo;
 	
 	public Integer getIdpermisos() {
 		return idpermisos;
@@ -44,6 +45,12 @@ public class Permisos {
 	}
 	public void setComponentString(String componentString) {
 		this.componentString = componentString;
+	}
+	public String getEdoIdentifierMongo() {
+		return edoIdentifierMongo;
+	}
+	public void setEdoIdentifierMongo(String edoIdentifierMongo) {
+		this.edoIdentifierMongo = edoIdentifierMongo;
 	}
 	
 	

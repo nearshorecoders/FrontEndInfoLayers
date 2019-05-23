@@ -21,6 +21,8 @@ var layout = (function() {
 
 	var urlPrefix="/infolayers";
 	
+	var allLayersStates = null;
+	
 	var initProperties = function() {
 		events.slowNetworkDetection();
 		events.getMainMenu();
@@ -30,27 +32,24 @@ var layout = (function() {
 		
 	};
 	
+	//var pg = {
+	//		mapa : null,
+	//		globalGeoJson : null,
+	//		requestGetAllStates : null,
+	//		responseGetAllStates : null,
+	//		allLayersStates : [],
+	//		statesShowed : [],
+	//		globalGeoJson : []
+	//	}
+	
 	var suscribeEvents = function() {
-		
+		//all jquery events initialization here
 		$(".navbar-brand.pitch-logo").on("click", function(){ 
-			events.loadMainPage();
+			
         });
 		
 		$('.nav-link').on('click', function() {
-			$("#navbarNavDropdown .nav-link").removeClass("current");
-			$(".navbar-nav li").removeClass("active");
-			$(this).parent().addClass('active');
-			var navLinkDOM = $(this);
-			var wall = navLinkDOM.attr('data-option');
-			var wallint = navLinkDOM.attr('data-option-int');
 
-			if(wallint == 0){
-				wall = "dashboard";
-			}
-			
-			if (wall != "null"){
-				events.changeView(wall);
-			}
 		});
 		
 	};
@@ -94,13 +93,14 @@ var layout = (function() {
 		},
 		
 		changeView : function (theView) {
-			console.log("cambiando vista");
 			currentView = theView;
 			var url = window.location.href;
 			var arr = url.split("/");
 			var result = arr[0] + "//" + arr[2]
-			
 			$("#btContent").load(result + urlPrefix+ "/" + theView );
+		},
+		changeLayer : function (edoId,layerName) {
+			circumscription.events.loadLayer(edoId,layerName);
 		},
 		getMainMenu : function() {
 			$.ajax({
@@ -150,7 +150,7 @@ var layout = (function() {
 						currentParentMenuName=currentParentMenuName.replace(/ /g,"");
 						
 						stringMenuDinamico=mainListContainerStart+
-											'<li class="treeview" id="menuParent'+arregloMenu[i].numberIndex + '" >'+
+											'<li class="treeview" id="menuParent'+arregloMenu[i].numberIndex + '" data-cveedo="'+arregloMenu[i].edoIdentifierMongo + '" >'+
 									          '<a href="'+arregloMenu[i].urlAction+'">'+
 									           '<i class="fa fa-share"></i> <span>'+ arregloMenu[i].nombreModulo +'</span>'+
 									            '<span class="pull-right-container">'+
@@ -160,12 +160,23 @@ var layout = (function() {
 									          '<ul class="treeview-menu" id="menuChildrenContainer' +currentParentMenu +'">'+
 									          '</ul>'+
 									         '</li>';
+						
 						$("#mainMenu").append(stringMenuDinamico);
 						
 					}else if(arregloMenu[i].moduloPadre==currentParentMenu){
 						
 						//stringMenuDinamico=  '<li id=menuChildren"'+arregloMenu[i].numberIndex+'" data-fatherLevel="'+levelFather+'"><a href="'+arregloMenu[i].urlAction+'" onclick="layout.events.changeview(\''+arregloMenu[i].urlAction+'\');"><i class="fa fa-circle-o"></i> '+ arregloMenu[i].nombreModulo +'</a></li>';
-						stringMenuDinamico=  '<li id=menuChildren"'+arregloMenu[i].numberIndex+'" data-fatherLevel="'+levelFather+'"><a onclick="layout.events.changeView(\''+arregloMenu[i].urlAction+'\');"><i class="fa fa-circle-o"></i> '+ arregloMenu[i].nombreModulo +'</a></li>';
+						if(arregloMenu[i].nombreCapaFront===null){
+							///geoJson load
+							//stringMenuDinamico=  '<li id=menuChildren"'+arregloMenu[i].numberIndex+'" data-fatherLevel="'+levelFather+'"><a onclick="layout.events.changeLayer(\''+arregloMenu[i].edoIdentifierMongo+'\',\''+arregloMenu[i].nombreCapaMongo+'\');"><i class="fa fa-circle-o"></i> <input id="'+arregloMenu[i].edoIdentifierMongo+''+arregloMenu[i].nombreCapaMongo+'" type="checkbox">'+ arregloMenu[i].nombreModulo +'</a></li>';	
+							stringMenuDinamico=  '<li id=menuChildren"'+arregloMenu[i].numberIndex+'" data-fatherLevel="'+levelFather+'"><a onclick="layout.events.changeLayer(\''+arregloMenu[i].edoIdentifierMongo+'\',\''+arregloMenu[i].nombreCapaMongo+'\');"><input id="'+arregloMenu[i].edoIdentifierMongo+''+arregloMenu[i].nombreCapaMongo+'" type="checkbox" onclick="layout.events.changeLayer(\''+arregloMenu[i].edoIdentifierMongo+'\',\''+arregloMenu[i].nombreCapaMongo+'\');">'+ arregloMenu[i].nombreModulo +'</a></li>';	
+							
+						}else{
+							//kmlLoad
+							//stringMenuDinamico=  '<li id=menuChildren"'+arregloMenu[i].numberIndex+'" data-fatherLevel="'+levelFather+'"><a onclick="layout.events.changeLayer(\''+arregloMenu[i].edoIdentifierMongo+'\',\''+arregloMenu[i].nombreCapaFront+'\');"><i class="fa fa-circle-o"></i> <input id="'+arregloMenu[i].edoIdentifierMongo+''+arregloMenu[i].nombreCapaFront+'" type="checkbox">'+ arregloMenu[i].nombreModulo +'</a></li>';
+							stringMenuDinamico=  '<li id=menuChildren"'+arregloMenu[i].numberIndex+'" data-fatherLevel="'+levelFather+'"><a onclick="layout.events.changeLayer(\''+arregloMenu[i].edoIdentifierMongo+'\',\''+arregloMenu[i].nombreCapaFront+'\');"><input id="'+arregloMenu[i].edoIdentifierMongo+''+arregloMenu[i].nombreCapaFront+'" type="checkbox" onclick="layout.events.changeLayer(\''+arregloMenu[i].edoIdentifierMongo+'\',\''+arregloMenu[i].nombreCapaMongo+'\');">'+ arregloMenu[i].nombreModulo +'</a></li>';
+							
+						}
 						
 						$("#menuChildrenContainer"+currentParentMenu).append(stringMenuDinamico);
 					

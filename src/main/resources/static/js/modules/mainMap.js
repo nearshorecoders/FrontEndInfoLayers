@@ -1,4 +1,3 @@
-
 var currentView="";
 var arrayAllZones=[];
 var arrayAllStates=[];
@@ -15,6 +14,7 @@ var circumscription = (function() {
     //---var a;
 	var st = {
 			globalMap: null,
+			globalMapOL: null,
 			globalMapG: null,
 			globalLayers: {},
 			titleLayer: null,
@@ -122,6 +122,21 @@ var circumscription = (function() {
         events.genericFunctionEvents("HELLO");
         //events.fillTable();
         
+        //init openlayers
+        st.globalMapOL = new ol.Map({
+            target: 'openLayersMap',
+            layers: [
+              new ol.layer.Tile({
+                source: new ol.source.OSM()
+              })
+            ],
+            view: new ol.View({
+              center: ol.proj.fromLonLat([-102.579,23.944]),
+              zoom: 5
+            })
+          });
+        
+        //end init open layers
 		st.globalMap = L.map('initialMap', {maxZoom: 18,zoomControl: false,minZoom: 4}).setView([23.4219128, -100.05443359375], 5).on('click', function(e) {
 		});
 		
@@ -133,16 +148,16 @@ var circumscription = (function() {
 		    accessToken: 'pk.eyJ1Ijoic2lib2siLCJhIjoiY2pnZnlvcDg3MDZ5djJ3bzVhZXk0ZHc2aCJ9.Kwg_2h2gsvQqpTRcxVWkVA'
 		}).addTo(st.globalMap);
 		
-		st.globalMapG = new google.maps.Map(document.getElementById('googleMap'), {
-			zoom: 5,
-	        center: {lat: 23.4219128, lng: -100.05443359375}
-	    });
-		
-		st.globalMapG.addListener('click', function(event) {
-			if(googleMaps.st.requestTimeDistance){
-				googleMaps.events.traceRouteInMap(st.globalMapG, event);
-			}
-		});
+//		st.globalMapG = new google.maps.Map(document.getElementById('googleMap'), {
+//			zoom: 5,
+//	        center: {lat: 23.4219128, lng: -100.05443359375}
+//	    });
+//		
+//		st.globalMapG.addListener('click', function(event) {
+//			if(googleMaps.st.requestTimeDistance){
+//				googleMaps.events.traceRouteInMap(st.globalMapG, event);
+//			}
+//		});
 		
 		$("#container").append($("<div/>").addClass("info leaflet-control").css("display","none"));
 		
@@ -180,17 +195,17 @@ var circumscription = (function() {
 			$('#detalleSeccionesAside').hide();
 		});
 		
-		googleMaps.st.requestTimeDistance = false;
-		$("#btn-trace-route").on('click', function(){
-			googleMaps.st.requestTimeDistance = googleMaps.st.requestTimeDistance == true ? false : true;
-			$(this).html(googleMaps.st.requestTimeDistance == true ? "Salir de Consultar Distancia" : "Consultar Distancia");
-			if(googleMaps.st.marksToTraceRoute){
-				googleMaps.st.marksToTraceRoute.forEach(function(v, i){
-					googleMaps.st.marksToTraceRoute[i].setMap(null);
-				});
-				googleMaps.st.marksToTraceRoute = [];
-			}
-		});
+//		googleMaps.st.requestTimeDistance = false;
+//		$("#btn-trace-route").on('click', function(){
+//			googleMaps.st.requestTimeDistance = googleMaps.st.requestTimeDistance == true ? false : true;
+//			$(this).html(googleMaps.st.requestTimeDistance == true ? "Salir de Consultar Distancia" : "Consultar Distancia");
+//			if(googleMaps.st.marksToTraceRoute){
+//				googleMaps.st.marksToTraceRoute.forEach(function(v, i){
+//					googleMaps.st.marksToTraceRoute[i].setMap(null);
+//				});
+//				googleMaps.st.marksToTraceRoute = [];
+//			}
+//		});
 		
 		setTimeout(function() {	
         	$("#animated-loader").css("display", "none");	
@@ -247,32 +262,200 @@ var circumscription = (function() {
 		}
 		return color;
 	},
+	
+    loadLayer : function (cvEdo,layerName) {
+
+    	
+//		layoutUtils.progressDownload( layerName,
+//				"Descargando ","http://localhost:8080/api/v1/informationlayers/getPobrezaByState/"+cvEdo+"/"+layerName, 
+//				function (data, textStatus, jqxhr) {
+//					var response = data;
+//					printLayerInMap(cvEdo, layerName, response);
+//				});
+		
+    	if(layerName.includes('kml')){
+            //events.loadKMLLayerOnMap(layerName);
+            events.loadKMLLayerOnOLMap(layerName);
+    	}else{
+//comented because is the mapof leaflet    		
+//            $.ajax({
+//                url: "http://localhost:8080/api/v1/informationlayers/getPobrezaByState/"+cvEdo+"/"+layerName,
+//            }).done(function(data) {
+//            	console.log("Se obtuvo "+cvEdo+","+layerName);
+//                st.geoJSONMap=data;
+//                events.loadStatesOnMap();	
+//            	
+//            });	
+            
+            events.loadGeoJsonLayerOnOLMap(cvEdo,layerName);
+    	}
+    	
+    },
+	
         loadDataAllZones : function () {
-            $.ajax({
-                url: "http://localhost:8080/api/v1/informationlayers/electoralZones",
-            }).done(function(data) {
-            	console.log("Se obtuvieron zonas electorales");
-            	console.log(data);
-            });
+//            $.ajax({
+//                url: "http://localhost:8080/api/v1/informationlayers/electoralZones",
+//            }).done(function(data) {
+//            	console.log("Se obtuvieron zonas electorales");
+//            	console.log(data);
+//            });
             
 //            $.ajax({
 //                url: "http://localhost:8080/api/v1/informationlayers/states",
 //            }).done(function(data) {
-//            	console.log("Se obtuvieron Estados");
+//            	//console.log("Se obtuvieron Estados");
 //            	st.geoJSONMap=data;
 //            	events.loadStatesOnMap();
 //            });            
-            
-            $.ajax({
-                url: "http://localhost:8080/api/v1/informationlayers/pobreza",
+//            
+//            $.ajax({
+//                url: "http://localhost:8080/api/v1/informationlayers/pobreza",
+//            }).done(function(data) {
+//            	console.log("Se obtuvieron pobreza");
+//            	st.geoJSONMap=data;
+//            	events.loadStatesOnMap();
+//            }); 
+        },
+        loadGeoJsonLayerOnOLMap: function (cvEdo,layerName){
+        	st.globalMapOL.getLayers().forEach(function (layer) {
+        		st.globalMapOL.removeLayer(layer);
+        	});
+
+        	st.globalMapOL.addLayer(new ol.layer.Tile({
+                source: new ol.source.OSM()
+              }));
+        	
+        	$.ajax({
+                 url: "http://localhost:8080/api/v1/informationlayers/getPobrezaByState/"+cvEdo+"/"+layerName,
             }).done(function(data) {
-            	console.log("Se obtuvieron pobreza");
-            	st.geoJSONMap=data;
-            	events.loadStatesOnMap();
-            }); 
+             	console.log("Se obtuvo "+cvEdo+","+layerName);
+             	geojsonObject=data[0];
+             	
+             	var styleFunction = function(feature) {
+                     //return styles[feature.values_.color];
+                     var retStyle =   new ol.style.Style({
+                         stroke: new ol.style.Stroke({ 
+                           color: feature.values_.color,
+                           width: 1
+                         }),
+                         fill: new ol.style.Fill({
+                             color: feature.values_.color
+                           })
+                       });
+                      return retStyle;
+                     
+                     
+                };
+             	
+             	var geojsonObject = {
+             		   'type': 'FeatureCollection',
+             		   'crs': {
+             		      'type': 'name',
+             		      'properties': {
+             		         'name': 'EPSG:3857'
+             		       }
+             		    },
+             		    'features': data
+             		};
+//             	
+//             	var data='{"type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": ['+JSON.stringify(geojsonObject)+']}';
+             	
+             	var features1 = (new ol.format.GeoJSON()).readFeatures(geojsonObject, {
+             		  dataProjection : 'EPSG:4326', 
+             		  featureProjection: 'EPSG:3857'
+             	});
+             	//delete geojsonObject._id;
+             	 var vectorSource = new ol.source.Vector({
+                     features:features1
+             		 //features: (new ol.format.GeoJSON()).readFeature(geojsonObject)
+             		//object: geojsonObject//(new ol.format.GeoJSON(geojsonObject[0]))
+                   });
+
+                 //vectorSource.addFeature(new Feature(new Circle([5e6, 7e6], 1e6)));
+
+                 var vectorLayer = new ol.layer.Vector({
+                     source: vectorSource,
+                     style: styleFunction
+                   });
+            	st.globalMapOL.addLayer(vectorLayer);
+            });		
+        	
+
+       	
+       	
+
+       },
+        loadKMLLayerOnOLMap: function (layerName){
+        	
+//        	 var vectorSource = new ol.source.GeoJSON({
+//        	        projection: 'EPSG:3857',
+//        	        url: '../assets/data/countries.geojson'
+//        	 });
+//
+//        	  // a vector layer to render the source
+//        	  var vectorLayer = new ol.layer.Vector({
+//        	        source: vectorSource
+//        	  });
+
+        	 var displayFeatureInfo = function(pixel) {
+        	        var features = [];
+        	        st.globalMapOL.forEachFeatureAtPixel(pixel, function(feature) {
+        	          features.push(feature);
+        	        });
+        	        if (features.length > 0) {
+        	          var info = [];
+        	          var i, ii;
+        	          for (i = 0, ii = features.length; i < ii; ++i) {
+        	            info.push(features[i].get('name'));
+        	          }
+        	          document.getElementById('info').innerHTML = info.join(', ') || '(unknown)';
+        	          st.globalMapOL.getTarget().style.cursor = 'pointer';
+        	        } else {
+        	          document.getElementById('info').innerHTML = '&nbsp;';
+        	          st.globalMapOL.getTarget().style.cursor = '';
+        	        }
+        	      };
+        	      st.globalMapOL.on('pointermove', function(evt) {
+        	          if (evt.dragging) {
+        	            return;
+        	          }
+        	          var pixel = map.getEventPixel(evt.originalEvent);
+        	          displayFeatureInfo(pixel);
+        	        });
+
+        	      st.globalMapOL.on('click', function(evt) {
+        	          displayFeatureInfo(evt.pixel);
+        	        });
+        	var vector = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                  url: 'js/'+layerName,
+                  format: new ol.format.KML()
+                })
+              });
+        	
+        	st.globalMapOL.addLayer(vector);
+          
+            
+            
+        	
+        	
+        },
+        loadKMLLayerOnMap: function (layerName){
+        	//st.globalGeoJson = L.geoJSON(st.geoJSONMap);
+        	//st.globalGeoJson.addTo(st.globalMap);
+        	
+            var kmlLayer = new L.KML("js/"+layerName, {async: true});
+            
+            kmlLayer.on("loaded", function(e) { 
+            	st.globalMap.fitBounds(e.target.getBounds());
+            });
+                                                   
+            st.globalMap.addLayer(kmlLayer);
+        	
+        	
         },
         loadStatesOnMap: function (){
-        	console.log("hereee");
+        	
         	if(st.globalGeoJson){
         		st.globalGeoJson.clearLayers();
         	}
